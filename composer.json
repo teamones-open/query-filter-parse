@@ -1,0 +1,24 @@
+{
+    "name": "teamones/query-filter-parse",
+    "description": "转换请求过滤参数",
+    "type": "library",
+    "keywords": [
+        "teamones",
+        "tp-orm"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "weijer",
+            "email": "weiwei163@foxmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "teamones\\filter\\": "src/"
+        }
+    }
+}
