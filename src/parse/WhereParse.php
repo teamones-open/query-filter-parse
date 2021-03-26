@@ -195,14 +195,60 @@ class WhereParse
     }
 
     /**
+     * 替换过滤条件中的方法名
+     * @param $val
+     * @param $key
+     */
+    protected function parserFilterCondition(&$val, $key)
+    {
+        $map = [
+            '-or' => 'OR', // 或者
+            '-and' => 'AND', // 且
+            '-eq' => 'EQ', // 等于
+            '-neq' => 'NEQ', // 不等于
+            '-gt' => 'GT', // 大于
+            '-egt' => 'EGT', // 大于等于
+            '-lt' => 'LT', // 小于
+            '-elt' => 'ELT', // 小于等于
+            '-lk' => 'LIKE', // 模糊查询（像）
+            '-not-lk' => 'NOTLIKE', // 模糊查询（不像）
+            '-bw' => 'BETWEEN', // 在之间
+            '-not-bw' => 'NOT BETWEEN', // 不在之间
+            '-in' => 'IN', // 在里面
+            '-not-in' => 'NOT IN' // 不在里面
+        ];
+
+        if (array_key_exists($val, $map)) {
+            $val = $map[$val];
+        }
+    }
+
+
+    /**
+     * 处理过滤条件中的方法名
+     * @param $data
+     * @return mixed
+     */
+    private function parserFilter($data)
+    {
+        array_walk_recursive($data, [$this, 'parserFilterCondition']);
+        return $data;
+    }
+
+    /**
      * where分析
-     * @access protected
-     * @param mixed $where
-     * @return string
+     * @param array $param
+     * @return false|string
      * @throws \Exception
      */
-    public function parseWhere($where)
+    public function parseWhere($param = [])
     {
+        if (empty($param)) {
+            return '';
+        }
+
+        // 处理过滤条件中的方法名
+        $where = $this->parserFilter($param);
         $whereStr = '';
         if (is_string($where)) {
             // 直接使用字符串条件
@@ -253,50 +299,6 @@ class WhereParse
             }
             $whereStr = substr($whereStr, 0, -strlen($operate));
         }
-        return empty($whereStr) ? '' : ' WHERE ' . $whereStr;
-    }
-
-
-    /**
-     * 替换过滤条件中的方法名
-     * @param $val
-     * @param $key
-     */
-    protected function parserFilterCondition(&$val, $key)
-    {
-        $map = [
-            '-or' => 'OR', // 或者
-            '-and' => 'AND', // 且
-            '-eq' => 'EQ', // 等于
-            '-neq' => 'NEQ', // 不等于
-            '-gt' => 'GT', // 大于
-            '-egt' => 'EGT', // 大于等于
-            '-lt' => 'LT', // 小于
-            '-elt' => 'ELT', // 小于等于
-            '-lk' => 'LIKE', // 模糊查询（像）
-            '-not-lk' => 'NOTLIKE', // 模糊查询（不像）
-            '-bw' => 'BETWEEN', // 在之间
-            '-not-bw' => 'NOT BETWEEN', // 不在之间
-            '-in' => 'IN', // 在里面
-            '-not-in' => 'NOT IN' // 不在里面
-        ];
-
-        if (array_key_exists($val, $map)) {
-            $val = $map[$val];
-        }
-    }
-
-
-    /**
-     * 处理过滤条件中的方法名
-     * @param $data
-     * @return mixed
-     */
-    public function parserFilter($data)
-    {
-        if ((array_key_exists("param", $data) && array_key_exists("filter", $data['param'])) || array_key_exists("filter", $data)) {
-            array_walk_recursive($data, [$this, 'parserFilterCondition']);
-        }
-        return $data;
+        return empty($whereStr) ? '' : $whereStr;
     }
 }

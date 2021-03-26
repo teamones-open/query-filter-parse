@@ -6,17 +6,19 @@ use teamones\filter\parse\WhereParse;
 
 /**
  * Enforcer
+ *
+ * @method static string parseWhere($where)
  */
 class Enforcer
 {
 
     /**
-     * @var null
+     * @var \teamones\filter\parse\WhereParse
      */
     protected static $_instance = null;
 
     /**
-     * @return null
+     * @return WhereParse
      */
     public static function instance()
     {
