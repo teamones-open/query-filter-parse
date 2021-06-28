@@ -89,7 +89,7 @@ class WhereParse
                 break;
             case '_complex':
                 // 复合查询条件
-                $whereStr = substr($this->parseWhere($val), 6);
+                $whereStr = $this->parseWhere($val);
                 break;
             case '_query':
                 // 字符串模式查询条件
